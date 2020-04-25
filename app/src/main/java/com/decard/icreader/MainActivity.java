@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
-//import com.decard.NDKMethod;
+
 
 public class MainActivity extends AppCompatActivity {
     private void myAddTextview(String str){
@@ -47,14 +47,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
         Button clearData = findViewById(R.id.clearData);
         clearData.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,12 +60,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String str;
-                //BasicOper.dc_AUSB_ReqPermission(getApplicationContext());
-                /*try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
                 try {
                     FileWriter localFileWriter = new FileWriter(new File("/sys/class/ugp_ctrl/gp_sys_5v_ctrl/enable"));
                     localFileWriter.write("1");
