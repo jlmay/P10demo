@@ -28,4 +28,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation fileTree(include: ['*.aar', '*.jar'], exclude: [], dir: 'libs')
     implementation files('libs/dc_mate_202003161731.jar')
+    implementation files('libs/platform_sdk_v4.0.0115.jar')
 }
