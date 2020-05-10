@@ -1,5 +1,6 @@
 package com.decard.icreader;
 
+import android.device.IccManager;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
@@ -16,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.File;
@@ -25,10 +27,15 @@ import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity {
+
     private void myAddTextview(String str){
         TextView tv = findViewById(R.id.messageText);
         tv.append(str+"\n");
         tv.setMovementMethod(ScrollingMovementMethod.getInstance());
+        int offset=tv.getLineCount()*tv.getLineHeight();
+        if(offset>tv.getHeight()){
+            tv.scrollTo(0,offset-tv.getHeight());
+        }
     }
     private String rndString()
     {
@@ -41,6 +48,21 @@ public class MainActivity extends AppCompatActivity {
             str=str+strtemp[tempi];
         }
         return str;
+    }
+    private  String bytesToHexString(byte[] src, int offset, int length) {
+        StringBuilder stringBuilder = new StringBuilder("");
+        if (src == null || src.length <= 0) {
+            return null;
+        }
+        for (int i = offset; i < length; i++) {
+            int v = src[i] & 0xFF;
+            String hv = Integer.toHexString(v);
+            if (hv.length() < 2) {
+                stringBuilder.append(0);
+            }
+            stringBuilder.append(hv);
+        }
+        return stringBuilder.toString();
     }
 
     /** Called when the user taps the button_open */
@@ -217,8 +239,8 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        result = BasicOper.dc_pro_commandhex("0084000008",7);
-        str = "send apdu:"+"0084000008";
+        result = BasicOper.dc_pro_commandhex("00a404000E315041592E5359532E4444463031",7);
+        str = "send apdu:"+"00a404000E315041592E5359532E4444463031";
         myAddTextview(str);
         resultArr = result.split("\\|",-1);
         if(resultArr[0].equals("0000")){
@@ -256,6 +278,118 @@ public class MainActivity extends AppCompatActivity {
         return ;
     }
 
+    public void operate_samcard(View view){
+        IccManager mIccReader = new IccManager();
+        int st , retlen;
+        String str;
+        byte[] atr = new byte[128];
+        byte[] rspBuf = new byte[300];
+        byte[] rspStatus = new byte[2];
+        st = mIccReader.open((byte)1, (byte)0x01, (byte)0x2);  //参数1 = 1，选择SAM1
+        if(st!=0) {
+            str = "选择操作SAM1卡错误 error code = "+ st ;
+            myAddTextview(str);
+            return;
+        }
+        myAddTextview("选择操作SAM1卡");
+        retlen = mIccReader.activate(atr);
+        if(retlen <= 0) {
+            str = "SAM1卡上电复位失败";
+            myAddTextview(str);
+            mIccReader.close();
+            return;
+        }
+        str ="SAM1卡复位成功："+ bytesToHexString(atr,0,retlen) ;
+        myAddTextview(str);
+
+        //SAM卡取随机数命令示例 0084000008
+        byte[] apdu_buf = {
+                0x00, (byte)0x84, 0x00, 0x00, 0x08
+        };
+
+        str ="APDU命令数据："+ bytesToHexString(apdu_buf,0,5) ;
+        myAddTextview(str);
+        retlen = mIccReader.apduTransmit(apdu_buf,5,rspBuf,rspStatus);
+        if(retlen == -1) {
+            str = "SAM1卡发送APDU命令失败";
+            myAddTextview(str);
+            mIccReader.close();
+            return;
+        }
+        str ="APDU返回数据："+ bytesToHexString(rspBuf,0,retlen) ;
+        myAddTextview(str);
+        str ="APDU返回状态："+ bytesToHexString(rspStatus,0,2) ;
+        myAddTextview(str);
+
+        mIccReader.close();
+        return;
+    }
+
+    public void operate_contactcpucard(View view){
+        IccManager mIccReader = new IccManager();
+        int st , retlen;
+        String str;
+        byte[] atr = new byte[128];
+        byte[] rspBuf = new byte[300];
+        byte[] rspStatus = new byte[2];
+        st = mIccReader.open((byte)0, (byte)0x01, (byte)0x2);
+        if(st!=0) {
+            str = "选择操作接触式CPU卡错误 error code = "+ st ;
+            myAddTextview(str);
+            return;
+        }
+        myAddTextview("选择操作接触式CPU大卡");
+        st= mIccReader.detect();
+        if(st!=0){
+            str = "没有检测到接触式IC卡 error code = "+ st ;
+            myAddTextview(str);
+            mIccReader.close();
+            return;
+        }
+        myAddTextview("检测到接触式大卡插入");
+        retlen = mIccReader.activate(atr);
+        if(retlen <=0) {
+            str = "接触式CPU卡上电复位失败";
+            myAddTextview(str);
+            mIccReader.close();
+            return;
+        }
+        str ="CPU卡复位成功："+ bytesToHexString(atr,0,retlen) ;
+        myAddTextview(str);
+
+        //金融CPU卡(SELECT)命令示例,请求选择 PSE(文件名“1PAY.SYS.DDF01”) 00a404000E315041592E5359532E4444463031
+        byte[] apdu_buf = {
+                0x00, (byte) 0xA4, 0x04, 0x00, 0x0E, 0x31, 0x50, 0x41, 0x59, 0x2E, 0x53,
+                0x59, 0x53, 0x2E, 0x44, 0x44, 0x46, 0x30, 0x31
+        };
+        str ="APDU命令数据："+ bytesToHexString(apdu_buf,0,19) ;
+        myAddTextview(str);
+        retlen = mIccReader.apduTransmit(apdu_buf,19,rspBuf,rspStatus);
+        if(retlen == -1) {
+            str = "接触式CPU卡发送APDU命令失败";
+            myAddTextview(str);
+            mIccReader.close();
+            return;
+        }
+        str ="APDU返回数据："+ bytesToHexString(rspBuf,0,retlen) ;
+        myAddTextview(str);
+        str ="APDU返回状态："+ bytesToHexString(rspStatus,0,2) ;
+        myAddTextview(str);
+
+        st = mIccReader.deactivate();
+        if(st!=0){
+            str = "接触式IC卡下电失败 error code = "+ st ;
+            myAddTextview(str);
+            mIccReader.close();
+            return;
+        }
+        myAddTextview("接触式IC卡下电成功！");
+        mIccReader.close();
+        return;
+    }
+
+
+    MsrCardTask transTask ;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -272,8 +406,32 @@ public class MainActivity extends AppCompatActivity {
                 imageView.setVisibility(View.INVISIBLE);
                 TextView tv = findViewById(R.id.messageText);
                 tv.setText("");
+                tv.scrollTo(0,0);
                 return;
-            }});
+            }
+        });
+
+        Button msrCardStart = findViewById(R.id.button_msrcardstart);
+        msrCardStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView tv = findViewById(R.id.messageText);
+                ProgressBar progressbar = (ProgressBar) findViewById(R.id.progressBar_msrcard);
+                MsrCardTask asyncTask = new MsrCardTask(tv, progressbar);
+                transTask = asyncTask;
+                asyncTask.execute();
+                return;
+            }
+        });
+        Button msrCardStop = findViewById(R.id.button_msrcardstop);
+        msrCardStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                transTask.cancel(true);
+                return;
+            }
+        });
+
     }
 
     @Override
