@@ -8,6 +8,7 @@
     <string name="button_cleardata">清除数据</string>
     <string name="button_idcard">读身份证</string>
     <string name="button_contactcpucard">接触式CPU卡操作</string>
-    <string name="button_msrcardstart">刷磁条卡启动</string>
-    <string name="button_msrcardstop">刷磁条卡取消</string>
+    <string name="button_msrcardstart">刷磁卡启动</string>
+    <string name="button_msrcardstop">刷磁卡取消</string>
+    <string name="button_samcard">SAM卡操作</string>
 </resources>
