@@ -1,6 +1,7 @@
 package com.decard.icreader;
 
 import android.device.MagManager;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.ProgressBar;
@@ -41,6 +42,7 @@ public class MsrCardTask extends AsyncTask<String, Integer, String> {
         // 作用：执行 线程任务前的操作
         @Override
         protected void onPreExecute() {
+            progressBar.setBackgroundColor(Color.WHITE );
             myAddTextview(textView,"请刷磁条卡");
             magManager = new MagManager();
             if (magManager != null) {
@@ -60,14 +62,13 @@ public class MsrCardTask extends AsyncTask<String, Integer, String> {
 
         // 方法2：doInBackground（）
         // 作用：接收输入参数、执行任务中的耗时操作、返回 线程任务执行的结果
-        // 此处通过计算从而模拟“加载进度”的情况
+        // 此处执行查询用户是否刷卡，注意这个函数不能操作UI，只能返回结果。
         @Override
         protected String doInBackground(String... params) {
             try {
                 int count = 0;
                 int length = 1;
                 while (count<99) {
-
                     count += length;
                     // 可调用publishProgress（）显示进度, 之后将执行onProgressUpdate（）
                     publishProgress(count);
@@ -106,22 +107,32 @@ public class MsrCardTask extends AsyncTask<String, Integer, String> {
                 byte[] stripInfo = new byte[1024];
                 int allLen = magManager.getAllStripInfo(stripInfo);
                 if (allLen > 0) {
-                    int len = stripInfo[1];
-                    if (len != 0)
-                        myAddTextview(textView, " track1: " + new String(stripInfo, 2, len));
-                    int len2 = stripInfo[3 + len];
+                    int len1 = stripInfo[1];
+                    if (len1 != 0)
+                        myAddTextview(textView, " track1: " + new String(stripInfo, 2, len1));
+                    int len2 = stripInfo[3 + len1];
                     if (len2 != 0)
-                        myAddTextview(textView, " \ntrack2: " + new String(stripInfo, 4 + len, len2));
-                    int len3 = stripInfo[5 + len + len2];
-                    if (len3 != 0 && len3 < 1024)
-                        myAddTextview(textView, " \ntrack3: " + new String(stripInfo, 6 + len + len2, len3));
+                        myAddTextview(textView, "track2: " + new String(stripInfo, 4 + len1, len2));
+                    int len3 = stripInfo[5 + len1 + len2];
+                    if (len3 != 0 )
+                        myAddTextview(textView, "track3: " + new String(stripInfo, 6 + len1 + len2, len3));
+                    if((len1!=0)||(len2!=0)||(len3!=0)) {
+                        progressBar.setBackgroundColor(Color.GREEN);
+                    }
+                    else{
+                        myAddTextview(textView,"磁条卡数据为空");
+                        progressBar.setBackgroundColor(Color.YELLOW );
+                    }
+
                 }
                 else{
-                    myAddTextview(textView,"磁条卡数据为空");
+                    myAddTextview(textView,"磁条卡刷卡错误");
+                    progressBar.setBackgroundColor(Color.RED);
                 }
             }
             else{
                 myAddTextview(textView,"等待刷卡超时");
+                progressBar.setBackgroundColor(Color.YELLOW );
             }
         }
 
@@ -130,5 +141,6 @@ public class MsrCardTask extends AsyncTask<String, Integer, String> {
         @Override
         protected void onCancelled() {
             myAddTextview(textView,"刷磁条卡取消");
+            progressBar.setBackgroundColor(Color.GRAY );
         }
     }
