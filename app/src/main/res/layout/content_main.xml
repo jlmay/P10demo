@@ -10,80 +10,171 @@
     tools:showIn="@layout/activity_main">
 
     <Button
-        android:id="@+id/openDevice"
+        android:id="@+id/button_contactcpucard2"
         style="@android:style/Widget.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:hint="@string/button_opendev"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="operate_samcard"
+        android:text="@string/button_samcard"
+        app:layout_constraintStart_toEndOf="@+id/button_contactcpucard"
+        app:layout_constraintTop_toBottomOf="@+id/button_cpucard" />
+
+    <Button
+        android:id="@+id/button_contactcpucard"
+        style="@android:style/Widget.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="operate_contactcpucard"
+        android:text="@string/button_contactcpucard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_m1card" />
+
+    <Button
+        android:id="@+id/button_open"
+        style="@android:style/Widget.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="open_reader"
+        android:text="@string/button_opendev"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/nonAccessCpu"
+        android:id="@+id/button_cpucard"
         style="@android:style/Widget.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:hint="@string/button_rfcpucard"
-        app:layout_constraintStart_toEndOf="@+id/nonAccessM1"
-        app:layout_constraintTop_toBottomOf="@+id/closeDevice" />
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="operate_cpucard"
+        android:text="@string/button_rfcpucard"
+        app:layout_constraintStart_toEndOf="@+id/button_m1card"
+        app:layout_constraintTop_toBottomOf="@+id/button_close" />
 
     <Button
-        android:id="@+id/nonAccessM1"
+        android:id="@+id/button_m1card"
         style="@android:style/Widget.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:hint="@string/button_m1card"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="operate_m1card"
+        android:text="@string/button_m1card"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/openDevice" />
+        app:layout_constraintTop_toBottomOf="@+id/button_open" />
 
     <Button
-        android:id="@+id/clearData"
+        android:id="@+id/button_clear"
         style="@android:style/Widget.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:hint="@string/button_cleardata"
-        app:layout_constraintStart_toEndOf="@+id/closeDevice"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/button_cleardata"
+        app:layout_constraintStart_toEndOf="@+id/button_close"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/closeDevice"
+        android:id="@+id/button_close"
         style="@android:style/Widget.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:hint="@string/button_closedev"
-        app:layout_constraintStart_toEndOf="@+id/openDevice"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="close_reader"
+        android:text="@string/button_closedev"
+        app:layout_constraintStart_toEndOf="@+id/button_open"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_idcard"
+        style="@android:style/Widget.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="read_idcard"
+        android:text="@string/button_idcard"
+        app:layout_constraintStart_toEndOf="@+id/button_cpucard"
+        app:layout_constraintTop_toBottomOf="@+id/button_clear" />
 
     <TextView
         android:id="@+id/messageText"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:hint="@string/app_name"
         android:scrollbars="vertical"
         android:singleLine="false"
         android:text=""
         android:textColor="@color/design_default_color_on_secondary"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/imageView_iccard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nonAccessCpu"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/button_contactcpucard" />
+
+    <ImageView
+        android:id="@+id/imageView_iccard"
+        android:layout_width="120dp"
+        android:layout_height="148dp"
+        android:contentDescription="@string/button_idcard"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/idexam" />
+
+    <ProgressBar
+        android:id="@+id/progressBar_msrcard"
+        style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"
+        android:layout_width="238dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="24dp"
+        android:max="100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.411"
+        app:layout_constraintStart_toEndOf="@+id/imageView_iccard" />
+
+    <Button
+        android:id="@+id/button_msrcardstart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/button_msrcardstart"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar_msrcard"
+        app:layout_constraintStart_toEndOf="@+id/imageView_iccard" />
+
+    <Button
+        android:id="@+id/button_msrcardstop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/button_msrcardstop"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar_msrcard"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
